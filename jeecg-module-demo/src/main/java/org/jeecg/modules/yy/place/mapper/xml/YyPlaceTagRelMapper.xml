@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.yy.place.mapper.YyPlaceTagRelMapper">
+
+	<delete id="deleteByMainId" parameterType="java.lang.String">
+		DELETE 
+		FROM  yy_place_tag_rel 
+		WHERE
+			 place_id = #{mainId} 	</delete>
+	
+	<select id="selectByMainId" parameterType="java.lang.String" resultType="org.jeecg.modules.yy.place.entity.YyPlaceTagRel">
+		SELECT * 
+		FROM  yy_place_tag_rel
+		WHERE
+			 place_id = #{mainId} 	</select>
+
+
+</mapper>

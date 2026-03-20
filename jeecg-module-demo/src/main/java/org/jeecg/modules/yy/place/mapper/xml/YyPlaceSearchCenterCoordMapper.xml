@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.yy.place.mapper.YyPlaceSearchCenterCoordMapper">
+
+    <!-- 根据標記的采集對象查询 -->
+    <select id="getSearchCentersByFlg" resultType="org.jeecg.modules.yy.place.entity.YyPlaceSearchCenterCoord">
+        select * from  yy_place_search_center_coord  where place_search_flg = '1'
+    </select>
+</mapper>

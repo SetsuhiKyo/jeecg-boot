@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.yy.place.mapper.YyUserReviewMapper">
+    <select id="getReviewInfoByRouteId" parameterType="java.lang.String" resultType="org.jeecg.modules.yy.place.vo.RouteInfoView">
+        SELECT
+            target_id                         AS id,
+            COUNT(DISTINCT user_id)           AS reviewNum,
+            AVG(review_rate)                  AS reviewRate
+        FROM yy_user_review
+        WHERE
+            target_kbn = '03'
+          AND user_type = '01'
+          AND target_id = #{routeId}
+        GROUP BY target_id;
+    </select>
+</mapper>

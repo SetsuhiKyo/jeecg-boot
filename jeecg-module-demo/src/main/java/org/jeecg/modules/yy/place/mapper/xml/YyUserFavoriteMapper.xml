@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.yy.place.mapper.YyUserFavoriteMapper">
+    <select id="selectTopFavoriteRoutes" resultType="org.jeecg.modules.yy.place.entity.YyRoute">
+        SELECT r.id, r.route_title_zh, r.pic_url
+        <if test="customerId!=null and customerId!=''">
+            , fav.favorite_flg
+        </if>
+        FROM yy_route r
+                 JOIN (
+            SELECT target_id, COUNT(*) cnt
+            FROM yy_user_favorite
+            WHERE target_kbn='03'
+              AND user_type='01'
+              AND favorite_flg='1'
+              AND create_time >= DATE_SUB(NOW(), INTERVAL #{days} DAY)
+            GROUP BY target_id
+            ORDER BY cnt DESC
+                LIMIT #{topNums}
+        ) t ON r.id = t.target_id
+        <if test="customerId!=null and customerId!=''">
+            left outer join yy_user_favorite fav
+            on r.id = fav.target_id
+            and target_kbn = '03'
+            and user_type = '01'
+            and user_id = #{customerId}
+        </if>
+        ORDER BY t.cnt DESC;
+    </select>
+    <select id="selectMyFavoriteRoutes" resultType="org.jeecg.modules.yy.place.entity.YyRoute">
+        SELECT r.id, r.route_title_zh, r.pic_url
+        <if test="customerId!=null and customerId!=''">
+            , fav.favorite_flg
+        </if>
+        FROM yy_route r
+                 JOIN (
+            SELECT target_id
+            FROM yy_user_favorite
+            WHERE target_kbn='03'
+              AND favorite_flg='1'
+              AND user_id = #{customerId}
+        ) t ON r.id = t.target_id
+        <if test="customerId!=null and customerId!=''">
+            left outer join yy_user_favorite fav
+            on r.id = fav.target_id
+            and target_kbn = '03'
+            and user_type = '01'
+            and user_id = #{customerId}
+        </if>
+    </select>
+    <select id="getResultByUserIdAndTargetId" resultType="org.jeecg.modules.yy.place.entity.YyUserFavorite">
+        SELECT *
+        FROM yy_user_favorite
+        WHERE target_kbn='03'
+            AND target_id = #{targetId}
+            AND user_type ='01'
+            AND user_id = #{userId}
+    </select>
+</mapper>

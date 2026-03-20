@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.yy.place.mapper.YyDiscountMapper">
+    <select id="getValidDiscount" parameterType="java.lang.String" resultType="org.jeecg.modules.yy.place.entity.YyDiscount">
+        SELECT
+            *
+        FROM yy_discount
+        WHERE
+            discount_type = #{type}
+          AND CURRENT_DATE BETWEEN start_date AND end_date
+    </select>
+</mapper>

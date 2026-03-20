@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.yy.place.mapper.YyUserDiscountMapper">
+    <select id="getUserDiscount" resultType="org.jeecg.modules.yy.place.vo.DiscountInfo">
+        SELECT
+            ud.discount_id as disId,
+            d.discount_cn as disName,
+            d.discount_type as disType,
+            d.discount_kbn as disKbn,
+            d.start_date as startDate,
+            d.end_date as endDate,
+            d.discount_rate as disRate,
+            d.discount_num as disAmount,
+            ud.used as used
+        FROM yy_user_discount ud
+                 LEFT JOIN yy_discount d
+                        ON ud.discount_id = d.id
+                        AND d.discount_type = '02'
+        WHERE
+            ud.user_type = '01'
+          AND ud.user_id = #{customerId}
+    </select>
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.yy.place.mapper.YyPlaceTagMapper">
+
+    <!-- 根据標記的地點標簽查询 -->
+    <select id="getPrimaryTypeByFlg" resultType="java.lang.String">
+        select primary_type from  yy_place_tag  where place_search_flg = '1'
+    </select>
+
+    <!-- 根据主類型查询標簽代碼 -->
+    <select id="getTagCdByPrimaryType" resultType="java.lang.String">
+        select tag_cd
+        from  yy_place_tag
+        where primary_type in
+        <foreach collection="primaryTypes" index="index" item="type" open="(" separator="," close=")">
+            #{type}
+        </foreach>
+    </select>
+</mapper>

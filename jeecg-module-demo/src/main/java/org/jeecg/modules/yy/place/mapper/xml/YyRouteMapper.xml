@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.yy.place.mapper.YyRouteMapper">
+    <select id="selectByRecommendFlg" parameterType="java.lang.String" resultType="org.jeecg.modules.yy.place.entity.YyRoute">
+        SELECT r.*
+        <if test="customerId!=null and customerId!=''">
+             , fav.favorite_flg
+        </if>
+        FROM  yy_route r
+        <if test="customerId!=null and customerId!=''">
+            left outer join yy_user_favorite fav
+                on r.id = fav.target_id
+                and target_kbn = '03'
+                and user_type = '01'
+                and user_id = #{customerId}
+        </if>
+        WHERE
+            recommend_flg = #{recommendFlg}
+    </select>
+
+</mapper>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.yy.place.mapper.YyRouteDetailPlacesMapper">
+
+    <select id="getPrvPlace" resultType="org.jeecg.modules.yy.place.entity.YyRouteDetailPlaces">
+        SELECT *
+        FROM  yy_route_detail_places
+        WHERE
+            route_id = #{routeId}
+            and detail_id = #{detailId}
+            and branch_no = #{branchNo}
+    </select>
+
+    <select id="selectByRouteId" resultType="org.jeecg.modules.yy.place.entity.YyRouteDetailPlaces">
+        SELECT
+            r.id,
+            r.create_by,
+            r.create_time,
+            r.update_by,
+            r.update_time,
+            r.route_id,
+            r.detail_id,
+            r.branch_no,
+            r.arrive_time,
+            r.pass_place_id,
+            p.name_zh AS pass_place_nm
+        FROM yy_route_detail_places r
+           LEFT JOIN yy_place p
+           ON r.pass_place_id = p.id
+        WHERE
+            r.route_id = #{routeId}
+    </select>
+
+    <select id="selectRouteByPlacesPage" resultType="org.jeecg.modules.yy.place.entity.YyRoute">
+        SELECT r.*
+        <if test="customerId!=null and customerId!=''">
+            , fav.favorite_flg
+        </if>
+        FROM yy_route r
+        <if test="placeIds != null and placeIds.size() > 0">
+            JOIN (
+            SELECT route_id
+            FROM yy_route_detail_places
+            WHERE pass_place_id IN
+            <foreach collection="placeIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            GROUP BY route_id
+            HAVING COUNT(DISTINCT pass_place_id) = #{placeCount}
+            ) t ON r.id = t.route_id
+        </if>
+        <if test="customerId!=null and customerId!=''">
+            left outer join yy_user_favorite fav
+            on r.id = fav.target_id
+            and target_kbn = '03'
+            and user_type = '01'
+            and user_id = #{customerId}
+        </if>
+        ORDER BY r.id
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="getDetailPlaces" resultType="org.jeecg.modules.yy.place.vo.YyRoutesDtailDayPlace">
+        SELECT
+            rdp.arrive_time as time,
+            rdp.pass_place_id as placeId,
+            p.name_zh as info,
+            p.name_zh as placeNm,
+            p.summary_zh as placeInfo,
+            p.place_img_url as placeImg
+        FROM yy_route_detail_places rdp
+                 LEFT JOIN yy_place p
+                           ON rdp.pass_place_id = p.id
+        WHERE rdp.route_id = #{routeId}
+          AND rdp.detail_id = #{detailId}
+        ORDER BY rdp.branch_no;
+
+    </select>
+
+</mapper>

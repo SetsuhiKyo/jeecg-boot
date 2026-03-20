@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.yy.place.mapper.YyOrderMapper">
+    <select id="selectTopOrderRoutes" resultType="org.jeecg.modules.yy.place.entity.YyRoute">
+        SELECT r.id, r.route_title_zh, r.pic_url
+            <if test="customerId!=null and customerId!=''">
+                , fav.favorite_flg
+            </if>
+        FROM yy_route r
+                 JOIN (
+            SELECT route_id, COUNT(*) cnt
+            FROM yy_order
+            WHERE order_sts='03'
+              AND order_type='04'
+              AND create_time >= DATE_SUB(NOW(), INTERVAL #{days} DAY)
+            GROUP BY route_id
+            ORDER BY cnt DESC
+                LIMIT #{topNums}
+        ) t ON r.id = t.route_id
+            <if test="customerId!=null and customerId!=''">
+                left outer join yy_user_favorite fav
+                on r.id = fav.target_id
+                and target_kbn = '03'
+                and user_type = '01'
+                and user_id = #{customerId}
+            </if>
+        ORDER BY t.cnt DESC;
+
+    </select>
+
+    <select id="getCustomerOrder" resultType="org.jeecg.modules.yy.place.vo.OrderInfoView">
+        SELECT
+            r.id as orderNo,
+            r.order_sts as orderStatus,
+            r.payment_sts as paymentStatus,
+            r.order_type as orderType,
+            r.order_kbn as orderKbn,
+            r.route_id as routeId,
+            r.order_name as orderNm,
+            DATE_FORMAT(r.start_time,'%Y-%m-%d %H:%i') as pickupDte,
+            r.pickup_place_id as pickupLoc,
+            p1.name_zh as pickupLocNm,
+            p1.address_zh as pickupLocAddr,
+            r.flight_no as flightNo,
+            r.car_category as carType,
+            r.drop_place_id as dropLoc,
+            p2.name_zh as dropLocNm,
+            p2.address_zh as dropLocAddr,
+            DATE_FORMAT(r.return_time,'%Y-%m-%d %H:%i') as returnDte,
+            r.rtn_pickup_place_id as rtnPickupLoc,
+            p3.name_zh as rtnPickupLocNm,
+            p3.address_zh as rtnPickupLocAddr,
+            r.rtn_drop_place_id as rtnDorpLoc,
+            p4.name_zh as rtnDorpLocNm,
+            p4.address_zh as rtnDorpLocAddr,
+            r.use_hours as useHours,
+            r.order_distance as orderDistance,
+            r.passenger_name as customerNm,
+            r.aldult_num as passengerNum,
+            r.big_luggage_num as lunguageNum,
+            r.need_child_seat as needChdChair,
+            r.need_baby_seat as needNameSign,
+            r.need_hotel_checkin as needHotelChkIn,
+            r.need_airport_checkin as needFlightChkIn,
+            r.server_price as computedPrice
+        FROM yy_order r
+                 left join yy_place p1
+                           on r.pickup_place_id = p1.id
+                 left join yy_place p2
+                           on r.drop_place_id = p2.id
+                 left join yy_place p3
+                           on r.rtn_pickup_place_id = p3.id
+                 left join yy_place p4
+                           on r.rtn_drop_place_id = p4.id
+        WHERE
+            r.customer_id = #{customerId}
+
+    </select>
+</mapper>

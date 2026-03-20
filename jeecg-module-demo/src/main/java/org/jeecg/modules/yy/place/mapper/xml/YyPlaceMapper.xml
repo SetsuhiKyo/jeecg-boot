@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.yy.place.mapper.YyPlaceMapper">
+    <!-- 根据地點ID查询是否存在 -->
+    <select id="getCountByPlaceId" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select count(*) from  yy_place  where google_plade_id = #{placeId}
+    </select>
+
+    <!-- 根据地點ID查询地点信息 -->
+    <select id="selectByPlaceId" resultType="org.jeecg.modules.yy.place.entity.YyPlace" parameterType="java.lang.String">
+        select * from  yy_place  where google_plade_id = #{placeId}
+    </select>
+
+    <!-- 根据输入补完类似地点列表（最大5条） -->
+    <select id="getPlacesByInput" resultType="org.jeecg.modules.yy.place.entity.YyPlace" parameterType="java.lang.String">
+        SELECT *
+        FROM yy_place
+        WHERE
+            name_zh LIKE CONCAT(#{input},'%') OR
+            name_tw LIKE CONCAT(#{input},'%') OR
+            name_jp LIKE CONCAT(#{input},'%') OR
+            name_en LIKE CONCAT(#{input},'%')
+        ORDER BY
+            create_time DESC
+            LIMIT 5;
+    </select>
+
+    <!-- 查询机场信息 -->
+    <select id="getAirports" resultType="org.jeecg.modules.yy.place.entity.YyPlace" >
+        select * from  yy_place  where google_primary_type = 'international_airport'
+    </select>
+</mapper>
