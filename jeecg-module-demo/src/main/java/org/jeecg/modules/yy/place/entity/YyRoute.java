@@ -1,15 +1,9 @@
 package org.jeecg.modules.yy.place.entity;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+
+import com.baomidou.mybatisplus.annotation.*;
 import org.jeecgframework.poi.excel.annotation.Excel;
-import org.jeecg.common.constant.ProvinceCityArea;
-import org.jeecg.common.util.SpringContextUtils;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,7 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 /**
  * @Description: 行程情报
- * @Author: jeecg-boot
+ * @Author: 姜雪飞
  * @Date:   2025-12-03
  * @Version: V1.0
  */
@@ -78,5 +72,7 @@ public class YyRoute implements Serializable {
     @Excel(name = "行程总距离", width = 15)
     @ApiModelProperty(value = "行程总距离")
     private java.lang.Integer totalDistance;
+    /** 是否收藏 (非数据库字段) */
+    @TableField(exist = false) // 关键：告诉 MyBatis-Plus 数据库中没有这一列
     private java.lang.String favoriteFlg;
 }

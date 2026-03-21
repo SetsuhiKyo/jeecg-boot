@@ -68,7 +68,7 @@ public class YyRouteDetailServiceImpl extends ServiceImpl<YyRouteDetailMapper, Y
 			routeInfo.setId(route.getId()); // 行程ID
 			routeInfo.setTitle(getResultByLang(route)); // 行程标题
 
-			BigDecimal basicPrice = yyRoutePriceMapper.getRouteBasicPrice("04", route.getId()); // 豪华7座的价格作为基本价格
+			BigDecimal basicPrice = yyRoutePriceMapper.getRouteBasicPrice("S5", route.getId()); // 豪华7座的价格作为基本价格
 			if (basicPrice != null) {
 				routeInfo.setBasicPrice(basicPrice); // 基本价格
 				routeInfo.setComputedPrice(computeDiscountPrice(basicPrice)); // 优惠价格
