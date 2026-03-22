@@ -27,7 +27,7 @@ jobs:
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.REMOTE_HOST }}
-          username: deploy   # ⚠️ 改成 deploy
+          username: ${{ secrets.REMOTE_USER }}   # ⚠️ 改成 deploy
           key: ${{ secrets.SERVER_SSH_KEY }}  # ⚠️ 建议用 key，不用密码
           source: "jeecg-module-system/jeecg-system-start/target/jeecg-system-start-3.7.3.jar"
           target: "/var/www/yy_car/"
@@ -38,7 +38,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.REMOTE_HOST }}
-          username: deploy
+          username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             mv /var/www/yy_car/jeecg-system-start-3.7.3.jar /var/www/yy_car/app.jar
