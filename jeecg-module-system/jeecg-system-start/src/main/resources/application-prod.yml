@@ -377,6 +377,6 @@ wikipedia:
       summary-ja: https://ja.wikipedia.org/api/rest_v1/page/summary/
       summary-zh: https://zh.wikipedia.org/api/rest_v1/page/summary/
 sendgrid:
-  api-key: ${SENDGRID_API_KEY:}
+  api-key: ${SENDGRID_API_KEY}
   from-email: noreply@easyridejapan.com
 
