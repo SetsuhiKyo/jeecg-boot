@@ -40,6 +40,8 @@ import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.config.firewall.SqlInjection.IDictTableWhiteListHandler;
 import org.jeecg.config.mybatis.MybatisPlusSaasConfig;
 import org.jeecg.modules.message.entity.SysMessageTemplate;
+import org.jeecg.modules.message.handle.ISendEmailHandle;
+import org.jeecg.modules.message.handle.ISendMsgHandle;
 import org.jeecg.modules.message.handle.impl.DdSendMsgHandle;
 import org.jeecg.modules.message.handle.impl.EmailSendMsgHandle;
 import org.jeecg.modules.message.handle.impl.QywxSendMsgHandle;
@@ -140,6 +142,9 @@ public class SysBaseApiImpl implements ISysBaseAPI {
 
 	@Autowired
 	private IYyCustomerService yyCustomerService;
+
+	@Autowired
+	private ISendEmailHandle emailHandle;
 
 	@Override
 	//@SensitiveDecode
@@ -1379,7 +1384,7 @@ public class SysBaseApiImpl implements ISysBaseAPI {
 	 */
 	@Override
 	public void sendEmailMsg(String email, String title, String content) {
-			EmailSendMsgHandle emailHandle=new EmailSendMsgHandle();
+//			EmailSendMsgHandle emailHandle=new EmailSendMsgHandle();
 			emailHandle.sendMsg(email, title, content);
 	}
 	
@@ -1392,7 +1397,7 @@ public class SysBaseApiImpl implements ISysBaseAPI {
 	 */
 	@Override
 	public void sendHtmlTemplateEmail(String email, String title, EmailTemplateEnum emailTemplateEnum,JSONObject params) {
-		EmailSendMsgHandle emailHandle=new EmailSendMsgHandle();
+//		EmailSendMsgHandle emailHandle=new EmailSendMsgHandle();
 		String htmlText="";
 		try{
 			//获取模板实例
@@ -1565,8 +1570,15 @@ public class SysBaseApiImpl implements ISysBaseAPI {
 	@Autowired
 	private SystemSendMsgHandle systemSendMsgHandle;
 
-	@Autowired
-	private EmailSendMsgHandle emailSendMsgHandle;
+	/**
+	 * 因为车务平台在生产环境下使用SendGridSendEmailHandle
+	 * 所以就不会加载EmailSendMsgHandle类
+	 * 这里编译时会报错！！开发环境下没有问题
+	 * 但是，因为使用EmailSendMsgHandle的函数在车务平台里并没有使用。
+	 * 是jeecg boot固有的机能。所以可以暂时注释掉
+	 */
+//	@Autowired
+//	private EmailSendMsgHandle emailSendMsgHandle;
 
 	@Autowired
 	private DdSendMsgHandle ddSendMsgHandle;
@@ -1605,11 +1617,11 @@ public class SysBaseApiImpl implements ISysBaseAPI {
 				message.setContent(HTMLUtils.parseMarkdown(message.getContent()));
 			}
 			//update-begin---author:wangshuai---date:2024-11-20---for:【QQYUN-8523】敲敲云发邮件通知，不稳定---
-			if(message.getIsTimeJob() != null && message.getIsTimeJob()){
-				emailSendMsgHandle.sendEmailMessage(message);
-			}else{
-				emailSendMsgHandle.sendMessage(message);
-			}
+//			if(message.getIsTimeJob() != null && message.getIsTimeJob()){
+//				emailSendMsgHandle.sendEmailMessage(message);
+//			}else{
+//				emailSendMsgHandle.sendMessage(message);
+//			}
 			//update-end---author:wangshuai---date:2024-11-20---for:【QQYUN-8523】敲敲云发邮件通知，不稳定---
 		}else if(MessageTypeEnum.DD.getType().equals(messageType)){
 			ddSendMsgHandle.sendMessage(message);

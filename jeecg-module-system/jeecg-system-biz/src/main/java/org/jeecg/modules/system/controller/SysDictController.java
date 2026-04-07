@@ -23,6 +23,7 @@ import org.jeecg.common.system.vo.DictQuery;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.*;
 import org.jeecg.config.mybatis.MybatisPlusSaasConfig;
+import org.jeecg.config.shiro.IgnoreAuth;
 import org.jeecg.config.shiro.ShiroRealm;
 import org.jeecg.modules.system.entity.SysDict;
 import org.jeecg.modules.system.entity.SysDictItem;
@@ -183,6 +184,33 @@ public class SysDictController {
 	@RequestMapping(value = "/getDictItems/{dictCode}", method = RequestMethod.GET)
 	public Result<List<DictModel>> getDictItems(@PathVariable("dictCode") String dictCode, @RequestParam(value = "sign",required = false) String sign,HttpServletRequest request) {
 		log.info(" dictCode : "+ dictCode);
+		Result<List<DictModel>> result = new Result<List<DictModel>>();
+		try {
+			List<DictModel> ls = sysDictService.getDictItems(dictCode);
+			if (ls == null) {
+				result.error500("字典Code格式不正确！");
+				return result;
+			}
+			result.setSuccess(true);
+			result.setResult(ls);
+			log.debug(result.toString());
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			result.error500("操作失败");
+			return result;
+		}
+		return result;
+	}
+
+	/**
+	 * 获取字典数据 【接口签名验证】
+	 * @param dictCode 字典code
+	 * @param dictCode 表名,文本字段,code字段  | 举例：sys_user,realname,id
+	 * @return
+	 */
+	@RequestMapping(value = "/getDictItems", method = RequestMethod.GET)
+	@IgnoreAuth
+	public Result<List<DictModel>> getDictItems(@RequestParam(value = "dictCode",required = true) String dictCode) {
 		Result<List<DictModel>> result = new Result<List<DictModel>>();
 		try {
 			List<DictModel> ls = sysDictService.getDictItems(dictCode);

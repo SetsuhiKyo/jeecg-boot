@@ -56,7 +56,7 @@ public class YyListener {
 
         // 向顾客提供的邮箱发送用户激活邮件，邮件内埋入激活链接
         String link= CUSTOMER_ACTIVATE_URL+token;
-        String subject = messageSource.getMessage("mail.subject", null, locale);
+        String subject = messageSource.getMessage(EmailTemplateEnum.CUSTOMER_ACCOUNT_ACTIVATE.getName()+".mail.subject", null, locale);
         String email = customer.getEmail();
         JSONObject params = new JSONObject();
         params.put("activationLink", link);

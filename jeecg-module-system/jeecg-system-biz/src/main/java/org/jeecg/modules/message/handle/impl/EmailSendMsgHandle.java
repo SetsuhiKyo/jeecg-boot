@@ -12,11 +12,13 @@ import org.jeecg.common.util.SpringContextUtils;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.config.StaticConfig;
 import org.jeecg.modules.message.entity.SysMessage;
+import org.jeecg.modules.message.handle.ISendEmailHandle;
 import org.jeecg.modules.message.handle.ISendMsgHandle;
 import org.jeecg.modules.message.mapper.SysMessageMapper;
 import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.system.mapper.SysUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -34,7 +36,8 @@ import java.util.Set;
  */
 @Slf4j
 @Component("emailSendMsgHandle")
-public class EmailSendMsgHandle implements ISendMsgHandle {
+@Profile("dev")
+public class EmailSendMsgHandle implements ISendEmailHandle {
     static String emailFrom;
 
     public static void setEmailFrom(String emailFrom) {

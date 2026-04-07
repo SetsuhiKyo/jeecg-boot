@@ -117,6 +117,7 @@ public class YyCustomerController extends JeecgController<YyCustomer, IYyCustome
 	@ApiOperation(value="顾客情报-添加", notes="顾客情报-添加")
 //	@RequiresPermissions("place:yy_customer:add")
 	@PostMapping(value = "/add")
+	@IgnoreAuth
 	public Result<String> add(@RequestBody YyCustomer yyCustomer) {
 
 		Result<String> result = new Result<String>();
@@ -156,6 +157,7 @@ public class YyCustomerController extends JeecgController<YyCustomer, IYyCustome
 	 @ApiOperation(value="顾客情报-激活", notes="顾客情报-激活")
 //	 @RequiresPermissions("place:yy_customer:add")
 	 @PostMapping(value = "/customerActivate")
+	 @IgnoreAuth
 	 public Result<String> customerActivate(@RequestBody JSONObject jsonObject) {
 
 		 Result<String> result = new Result<String>();
