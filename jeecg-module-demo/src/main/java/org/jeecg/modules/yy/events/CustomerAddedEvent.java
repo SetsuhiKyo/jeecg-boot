@@ -5,7 +5,7 @@ import org.jeecg.modules.yy.place.entity.YyCustomer;
 import org.jeecg.modules.yy.place.entity.YyOrder;
 
 /**
- * Description:
+ * Description:顾客注册成功事件，引发顾客账户激活邮件（customer_account_activate.ftl）
  *
  * @Author 姜雪飛
  * @Create 2026/03/01

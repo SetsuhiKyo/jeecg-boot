@@ -164,6 +164,14 @@ public class Result<T> implements Serializable {
 		return this;
 	}
 
+	// 登录错误
+	public Result<T> error403(String message) {
+		this.message = message;
+		this.code = CommonConstant.SC_INTERNAL_SERVER_ERROR_403;
+		this.success = false;
+		return this;
+	}
+
 	/**
 	 * 无权限访问返回结果
 	 */

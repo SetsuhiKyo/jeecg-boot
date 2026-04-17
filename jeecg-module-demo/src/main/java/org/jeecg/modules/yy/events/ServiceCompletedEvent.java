@@ -4,7 +4,7 @@ import lombok.Data;
 import org.jeecg.modules.yy.place.entity.YyOrder;
 
 /**
- * Description:
+ * Description:顾客确认【服务完成】事件，引发服务完成通知邮件（06_service_completed.ftl）
  *
  * @Author 姜雪飛
  * @Create 2026/03/01

@@ -79,6 +79,7 @@ public interface CommonConstant {
 	
 	/** {@code 500 Server Error} (HTTP/1.0 - RFC 1945) */
     Integer SC_INTERNAL_SERVER_ERROR_500 = 500;
+    Integer SC_INTERNAL_SERVER_ERROR_403 = 403;
     /** {@code 404 Not Found} (HTTP/1.0 - RFC 1945) */
     Integer SC_INTERNAL_NOT_FOUND_404 = 404;
     /** {@code 200 OK} (HTTP/1.0 - RFC 1945) */

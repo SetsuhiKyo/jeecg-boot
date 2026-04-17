@@ -25,7 +25,7 @@ public enum EmailTemplateEnum {
     /**
      * 用户注册成功（邮件内埋入激活链接）
      */
-    CUSTOMER_ACCOUNT_ACTIVATE("customer_account_activate","/templates/email/customer_account_activate.ftl"),
+    CUSTOMER_ACCOUNT_ACTIVATE("mail.customerAccountActivate","/templates/email/customer_account_activate.ftl"),
 
     /**
      * 订单已受理（预约成功）
@@ -42,7 +42,7 @@ public enum EmailTemplateEnum {
     /**
      * 已付款确认
      */
-    PAYMENT_RECEIVED("04_payment_received","/templates/email/04_payment_received.ftl"),
+    PAYMENT_RECEIVED("04_payment_received", "/templates/email/04_payment_paied_confirm.ftl"),
     /**
      * 服务即将开始通知
      */

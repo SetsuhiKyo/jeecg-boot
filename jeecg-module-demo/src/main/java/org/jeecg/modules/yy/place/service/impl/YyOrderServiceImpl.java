@@ -133,7 +133,7 @@ public class YyOrderServiceImpl extends ServiceImpl<YyOrderMapper, YyOrder> impl
 		}
 
 		if (!paymentSts.equals(dbOrder.getPaymentSts())) {
-			updatePaymentSts = updatePaymentSts(orderInfo.getId(),orderSts);
+			updatePaymentSts = updatePaymentSts(orderInfo.getId(),paymentSts);
 		}
 
 		return updateOrderSts && updatePaymentSts;
@@ -178,20 +178,21 @@ public class YyOrderServiceImpl extends ServiceImpl<YyOrderMapper, YyOrder> impl
 				}
 				order.setOrderSts(OrderStatus.IN_SERVICE.name());
 				// TODO:给客服发送【正在服务】邮件，现实点未做成
-//				targetEvent = new ServiceReminderEvent(order);
+//				targetEvent = new ServiceInProcessEvent(order);
 				break;
 			case "COMPLETED":
 				if (!OrderStatus.IN_SERVICE.name().equals(order.getOrderSts())) {
 					throw new RuntimeException("当前状态不能更新为【服务完成】，请先确认司机已在【服务中】");
 				}
 				order.setOrderSts(OrderStatus.COMPLETED.name());
+				targetEvent = new ServiceCompletedEvent(order);
 				// TODO:发起结算流程
 				// 发起结算申请流程，在结算表中新增一条记录
 //				YyOrderSettlement settlement  = new YyOrderSettlement();
 //				settlement.setOrderId(orderId);
 //				settlement.setSettlementSts(SettlementStatus.REQUESTED.name());
 //				yyOrderSettlementService.save(settlement);
-				targetEvent = new ServiceCompletedEvent(order);
+
 				break;
 			case "CANCEL_REQUESTED":
 			case "CANCELLED":
@@ -203,47 +204,44 @@ public class YyOrderServiceImpl extends ServiceImpl<YyOrderMapper, YyOrder> impl
 						|| (OrderStatus.CONFIRMED.name().equals(order.getOrderSts())
 						&& PaymentStatus.UNPAID.name().equals(order.getPaymentSts()))) {
 					// 订单在【已预约】，【已确认】但【未支付】的情况下，直接更新为【已取消】，邮件中不提及扣除违约金
-					// TODO:邮件模板和国际化都需要重新对应
 					order.setOrderSts(OrderStatus.CANCELLED.name());
-					targetEvent = new OrderCancelledEvent(order);
+					targetEvent = new OrderCancelledEvent(order,false);
 				}
 				if (OrderStatus.CONFIRMED.name().equals(order.getOrderSts())
 						&& PaymentStatus.PENDING_CONFIRM.name().equals(order.getPaymentSts())) {
 					// 顾客更新为【支付确认】的情况下，首先更新为【申请取消】状态，并向客服发送邮件。
 					// 客服线下确认是否收到汇款，如果收到汇款，在后台界面更新为【已支付】，再更新为【已取消】。
 					// 如果未收到汇款（需要等几天再确认几次，还是没有收到的话），在后台界面更新为【未支付】，再更新【已取消】。
-					// TODO:邮件模板和国际化都需要重新对应
 					order.setOrderSts(OrderStatus.CANCEL_REQUESTED.name());
 					targetEvent = new RequestCancelEvent(order);
 				}
 				if (OrderStatus.READY.name().equals(order.getOrderSts())) {
-					// 订单在【待服务】的情况下，直接更新为【已取消】，邮件中需要提及扣除违约金
-					// TODO:邮件模板和国际化都需要重新对应
-					order.setOrderSts(OrderStatus.CANCELLED.name());
-					// 发起退款流程，在退款表中新增一条记录
-					YyOrderRefund refund  = new YyOrderRefund();
-					refund.setOrderId(orderId);
-					refund.setRefundSts(RefundStatus.REQUESTED.name());
-					refund.setRefundAmount(order.getServerPrice().multiply(new BigDecimal(0.3))); // 已经准备服务的情况下取消订单，扣除30%违约金。
-					yyOrderRefundService.save(refund);
-					targetEvent = new OrderCancelledEvent(order);
+					// 订单在【待服务】的情况下，直接更新为【申请取消】，邮件中需要提及扣除违约金
+					order.setOrderSts(OrderStatus.CANCEL_REQUESTED.name());
+					targetEvent = new RequestCancelEvent(order);
+					// TODO:发起退款流程，在退款表中新增一条记录
+//					YyOrderRefund refund  = new YyOrderRefund();
+//					refund.setOrderId(orderId);
+//					refund.setRefundSts(RefundStatus.REQUESTED.name());
+//					refund.setRefundAmount(order.getServerPrice().multiply(new BigDecimal(0.3))); // 已经准备服务的情况下取消订单，扣除30%违约金。
+//					yyOrderRefundService.save(refund);
+
 				}
 				if (OrderStatus.CANCEL_REQUESTED.name().equals(order.getOrderSts())) {
 					if (PaymentStatus.PAID.name().equals(order.getPaymentSts())) {
-						// 【已支付】的情况下，发送邮件，说明扣除违约金
-						// TODO:邮件模板和国际化都需要重新对应
-						// 发起退款流程，在退款表中新增一条记录
-						YyOrderRefund refund  = new YyOrderRefund();
-						refund.setOrderId(orderId);
-						refund.setRefundSts(RefundStatus.REQUESTED.name());
-						refund.setRefundAmount(order.getServerPrice().multiply(new BigDecimal(0.1))); // 已经准备服务的情况下取消订单，扣除10%违约金。
-						yyOrderRefundService.save(refund);
-						targetEvent = new OrderCancelledEvent(order);
+						// 【已支付】的情况下，直接更新为【已取消】，发送邮件，说明扣除违约金
+						targetEvent = new OrderCancelledEvent(order,true);
+						// TODO:发起退款流程，在退款表中新增一条记录
+//						YyOrderRefund refund  = new YyOrderRefund();
+//						refund.setOrderId(orderId);
+//						refund.setRefundSts(RefundStatus.REQUESTED.name());
+//						refund.setRefundAmount(order.getServerPrice().multiply(new BigDecimal(0.1))); // 已经准备服务的情况下取消订单，扣除10%违约金。
+//						yyOrderRefundService.save(refund);
+
 					}
-					if (PaymentStatus.PAID.name().equals(order.getPaymentSts())) {
-						// 【未支付】的情况下，发送邮件，不扣除违约金
-						// TODO:邮件模板和国际化都需要重新对应
-						targetEvent = new OrderCancelledEvent(order);
+					if (PaymentStatus.UNPAID.name().equals(order.getPaymentSts())) {
+						// 【未支付】的情况下，直接更新为【已取消】，发送邮件，不扣除违约金
+						targetEvent = new OrderCancelledEvent(order,false);
 					}
 					order.setOrderSts(OrderStatus.CANCELLED.name());
 				}
@@ -282,21 +280,28 @@ public class YyOrderServiceImpl extends ServiceImpl<YyOrderMapper, YyOrder> impl
 					throw new RuntimeException("当前状态不能更新为【支付确认】,请先【已确认】订单。");
 				}
 				order.setPaymentSts(PaymentStatus.PENDING_CONFIRM.name());
-				// TODO:给客服发送【顾客已支付】邮件，现实点未做成
-//				targetEvent = new ServiceReminderEvent(order);
+				// 给客服发送【顾客已支付】邮件
+				targetEvent = new PaymentPaiedConfirmEvent(order);
 				break;
 			case "PAID":
 				if (!PaymentStatus.PENDING_CONFIRM.name().equals(order.getPaymentSts())) {
 					throw new RuntimeException("当前状态不能更新为【已支付】,先请顾客转账，然后发起【支付确认】。");
 				}
-				order.setPaymentSts(PaymentStatus.PENDING_CONFIRM.name());
-				// 确认【已支付】后，直接更新订单为【待服务】
-				updateOrderSts(orderId, OrderStatus.READY.name());
+				order.setPaymentSts(PaymentStatus.PAID.name());
+
 				break;
 		}
 
 		updateRet = saveOrUpdate(order);
 
+		if(updateRet && PaymentStatus.PAID.name().equals(order.getPaymentSts())) {
+			// 确认【已支付】更新完成后，直接更新订单为【待服务】
+			updateOrderSts(orderId, OrderStatus.READY.name());
+		}
+
+		if (updateRet) {
+			publisher.publishEvent(targetEvent);
+		}
 		return updateRet;
 	}
 

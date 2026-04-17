@@ -4,7 +4,7 @@ import lombok.Data;
 import org.jeecg.modules.yy.place.entity.YyOrder;
 
 /**
- * Description:
+ * Description:顾客或客服【服务完成】事件，引发结算申请邮件（08_settlement_request.ftl）
  *
  * @Author 姜雪飛
  * @Create 2026/03/01

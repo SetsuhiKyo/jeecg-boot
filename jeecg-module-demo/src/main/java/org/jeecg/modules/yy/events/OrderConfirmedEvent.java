@@ -4,7 +4,7 @@ import lombok.Data;
 import org.jeecg.modules.yy.place.entity.YyOrder;
 
 /**
- * Description:
+ * Description:订单确认（安排好司机和时间）事件，引发订单确认（等待付款）邮件（02_order_confirmed.ftl）
  *
  * @Author 姜雪飛
  * @Create 2026/03/01

@@ -20,6 +20,7 @@ import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.*;
 import org.jeecg.common.util.encryption.EncryptedString;
 import org.jeecg.config.JeecgBaseConfig;
+import org.jeecg.config.yyi18n.LangContext;
 import org.jeecg.modules.base.service.BaseCommonService;
 import org.jeecg.modules.system.entity.SysDepart;
 import org.jeecg.modules.system.entity.SysRoleIndex;
@@ -881,7 +882,8 @@ public class LoginController {
 
 		//update-begin-author:taoyan date:2022-11-7 for: issues/4109 平台用户登录失败锁定用户
 		if(isLoginFailOvertimes(username)){
-			return result.error500("该用户登录失败次数过多，请于10分钟后再次登录！");
+			baseCommonService.addLog("顾客登录失败，顾客:" + username + "登录失败次数过多，超过5次", CommonConstant.LOG_TYPE_1, null);
+			return result.error403("CUSTOMER_OVER_ERROR");
 		}
 		//update-end-author:taoyan date:2022-11-7 for: issues/4109 平台用户登录失败锁定用户
 		//1. 校验用户是否有效
@@ -891,21 +893,21 @@ public class LoginController {
 		if(customer == null) {
 			//情况1：用户不存在
 			baseCommonService.addLog("顾客登录失败，顾客:" + username + "没有注册", CommonConstant.LOG_TYPE_1, null);
-			result.error500("CUSTOMER_NULL");
+			result.error403("CUSTOMER_NULL");
 			return result;
 		}else {
 			//情况2：根据用户信息查询，该用户未激活
 			if (CommonConstant.CUSTOMER_DISACTIVE.equals(customer.getCustormerSts())) {
 				// 重新发送激活邮件
 				baseCommonService.addLog("顾客登录失败，邮件:" + customer.getEmail() + "的顾客未激活！", CommonConstant.LOG_TYPE_1, null);
-				result.error500("CUSTOMER_DISACTIVE");
+				result.error403("CUSTOMER_DISACTIVE");
 				return result;
 			}
 
 			//情况3：根据用户信息查询，该用户已冻结
 			if (CommonConstant.CUSTOMER_FREEZE.equals(customer.getCustormerSts())) {
 				baseCommonService.addLog("顾客登录失败，邮件:" + customer.getEmail() + "的顾客已冻结！", CommonConstant.LOG_TYPE_1, null);
-				result.error500("CUSTOMER_FREEZE");
+				result.error403("CUSTOMER_FREEZE");
 				return result;
 			}
 		}
@@ -917,7 +919,7 @@ public class LoginController {
 			//update-begin-author:taoyan date:2022-11-7 for: issues/4109 平台用户登录失败锁定用户
 			addLoginFailOvertimes(username);
 			//update-end-author:taoyan date:2022-11-7 for: issues/4109 平台用户登录失败锁定用户
-			result.error500("用户名或密码错误");
+			result.error403("CUSTOMER_LOGIN_ERROR");
 			return result;
 		}
 
@@ -926,6 +928,7 @@ public class LoginController {
 		rtnCustomer.setId(customer.getId());
 		rtnCustomer.setCustomerSalt(Base62Util.encode(customer.getId())); // 顾客短缩ID
 		rtnCustomer.setCustomerName(customer.getCustomerName());
+		rtnCustomer.setLangCd(customer.getLangCd());
 		rtnCustomer.setEmail(customer.getEmail());
 		obj.put("customerInfo", rtnCustomer);
 

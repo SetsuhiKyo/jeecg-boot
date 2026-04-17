@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html>
 <body>
-<p>${greeting} ${customerName},</p>
 
 <p>${mail_requestCancel_line1}</p>
 
 <p>
     <strong>${label_orderNo}:</strong> ${orderNo}<br/>
-    <strong>${label_requestCancel}:</strong> ${requestCancel}
+    <strong>${label_paymentStatus}:</strong> ${paymentStatus}
 </p>
 
-<p>${mail_requestCancel_line2}</p>
+    <p>${mail_requestCancel_line2}</p>
 
-<br/>
-<p>${signature_line1}</p>
-<p>${signature_line2}</p>
+    <p>${mail_requestCancel_line3}</p>
+
+    <p>${mail_requestCancel_line4}</p>
 </body>
 </html>

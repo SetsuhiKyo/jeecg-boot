@@ -26,6 +26,7 @@ import org.jeecg.common.system.query.QueryRuleEnum;
 import org.jeecg.common.util.PasswordUtil;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.config.shiro.IgnoreAuth;
+import org.jeecg.config.yyi18n.LangContext;
 import org.jeecg.modules.base.service.BaseCommonService;
 import org.jeecg.modules.yy.place.entity.YyActivationToken;
 import org.jeecg.modules.yy.place.entity.YyCustomer;

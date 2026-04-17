@@ -11,6 +11,7 @@ import org.jeecg.common.desensitization.annotation.SensitiveEncode;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.PasswordUtil;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.config.yyi18n.LangContext;
 import org.jeecg.modules.base.service.BaseCommonService;
 import org.jeecg.modules.yy.events.CustomerAddedEvent;
 import org.jeecg.modules.yy.place.entity.YyActivationToken;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -141,6 +143,7 @@ public class YyCustomerServiceImpl extends ServiceImpl<YyCustomerMapper, YyCusto
         yyCustomer.setCustomerSalt(salt);
         String passwordEncode = PasswordUtil.encrypt(account, password, salt);
         yyCustomer.setCustomerPwd(passwordEncode);
+        yyCustomer.setLangCd(getCustomerLangCode()); // 语言代码
         yyCustomer.setCustormerSts("0"); // 0:未激活 1:已激活 2:冻结
         yyCustomer.setEmailVerify("0"); // 0:邮件未检证  1:邮件已检证
         boolean retCustomer = this.save(yyCustomer);
@@ -164,6 +167,9 @@ public class YyCustomerServiceImpl extends ServiceImpl<YyCustomerMapper, YyCusto
         return retCustomer && ret;
     }
 
+    private String getCustomerLangCode(){
+        return LangContext.getLang() == null ? "en":LangContext.getLang();
+    }
     /**
      * 激活顾客账户
      * @param yyCustomer 顾客信息

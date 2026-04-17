@@ -91,7 +91,7 @@ spring:
   #json 时间戳统一转换
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
-    time-zone: GMT+8
+    time-zone: Asia/Tokyo
   jpa:
     open-in-view: false
   aop:
@@ -310,8 +310,13 @@ jeecg:
   # 顾客前端路径
   uni-app:
     customer:
-      activate-link: http://107.191.60.118:9000/#/pages/activate/activate?token=
-      profile-url: http://107.191.60.118:9000/#/pages/profile/profile
+      activate-link: https://www.easyridejapan.com/pages/activate/activate?token=
+      profile-url: https://www.easyridejapan.com/pages/profile/profile
+    support:
+      email: jiang1980jp@gmail.com
+    payment:
+      stripelink: https://buy.stripe.com/28E5kE2je8L9ef5cyD5Rm00
+      paypallink:
 #cas单点登录
 cas:
   prefixUrl: http://cas.example.org:8443/cas
